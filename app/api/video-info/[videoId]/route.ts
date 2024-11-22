@@ -1,5 +1,4 @@
 // app/api/video-info/[videoId]/route.ts
-import { channel } from 'diagnostics_channel';
 import { NextResponse } from 'next/server';
 
 export async function GET(
@@ -13,10 +12,9 @@ export async function GET(
     );
   }
 
-
-  const { videoId } = await context.params;
-
   try {
+    const { videoId } = await context.params;
+    
     const response = await fetch(
       `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${process.env.YOUTUBE_API_KEY}`
     );
@@ -34,11 +32,11 @@ export async function GET(
       );
     }
 
-    const videoInfo = data.items[0];
+    const videoInfo = data.items[0].snippet;
     return NextResponse.json({
-      title: videoInfo.snippet.title,
-      channelTitle: videoInfo.snippet.channelTitle,
-      description: videoInfo.snippet.description
+      title: videoInfo.title,
+      channelTitle: videoInfo.channelTitle,
+      description: videoInfo.description
     });
   } catch (error) {
     console.error('Video info fetch error:', error);
